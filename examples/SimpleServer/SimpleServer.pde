@@ -17,13 +17,14 @@ void mousePressed(){
   server.sendToAll("hey");
 }
 
-void onWsOpen(org.java_websocket.WebSocket connection){
+void onWsOpen(WebSocket connection){
   println("got a new connection");
 }
 
-void onWsMessage( org.java_websocket.WebSocket connection, String message ){
-  println("got a message "+message);
+void onWsMessage( WebSocket connection, String message ){
+  println("server: got a message "+message);
+  connection.send(message);
 }
 
-void onWsClose( org.java_websocket.WebSocket connection){
+void onWsClose( WebSocket connection){
 }

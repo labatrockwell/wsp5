@@ -15,14 +15,14 @@ void draw(){
 }
 
 void mousePressed(){
-  client.send("hey");
+  client.send("hey?");
 }
 
 void onWsOpen(){
 }
 
 void onWsMessage( String msg ){
-  println("got a message "+msg);
+  println("client: got a message "+msg);
 }
 
 void onWsClose(){

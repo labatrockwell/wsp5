@@ -14,7 +14,7 @@ import java.lang.Boolean;
 import java.lang.String;
 
 // import java-websocket stuff
-import org.java_websocket.WebSocket;
+//import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
@@ -29,7 +29,7 @@ public class WsServer extends WebSocketServer {
 
 	public WsServer(Object _parent, int port) {
 		super( new InetSocketAddress( port ) );
-		WebSocket.DEBUG = false;
+		org.java_websocket.WebSocket.DEBUG = false;
 		parent = _parent;
         
         registerEvents();
@@ -37,10 +37,10 @@ public class WsServer extends WebSocketServer {
 	}
 
 	@Override
-	public void onOpen( WebSocket conn, ClientHandshake handshake ) {
+	public void onOpen( org.java_websocket.WebSocket conn, ClientHandshake handshake ) {
 		if ( onOpenMethod != null ){
 			try {
-				onOpenMethod.invoke( parent, conn );
+				onOpenMethod.invoke( parent, new WebSocket(conn) );
 			} catch( Exception e ){
 				System.err.println("onWsOpened invoke failed, disabling :(");
 				onOpenMethod = null;
@@ -49,10 +49,10 @@ public class WsServer extends WebSocketServer {
 	}
 
 	@Override
-	public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
+	public void onClose( org.java_websocket.WebSocket conn, int code, String reason, boolean remote ) {
 		if ( onCloseMethod != null ){
 			try {
-				onCloseMethod.invoke( parent, conn, code, reason, remote);
+				onCloseMethod.invoke( parent, new WebSocket(conn), code, reason, remote);
 			} catch( Exception e ){
 				System.err.println("onWsClosed invoke failed, disabling :(");
 				onCloseMethod = null;
@@ -61,11 +61,11 @@ public class WsServer extends WebSocketServer {
 	}
 
 	@Override
-	public void onMessage( WebSocket conn, String message ) {
+	public void onMessage( org.java_websocket.WebSocket conn, String message ) {
 		if ( onMessageMethod != null ){
 			try {
 				if ( bUseAdvancedMessage ){
-					onMessageMethod.invoke( parent, conn, message);
+					onMessageMethod.invoke( parent, new WebSocket(conn), message);
 				} else {
 					onMessageMethod.invoke( parent, message);	
 				}
@@ -77,7 +77,7 @@ public class WsServer extends WebSocketServer {
 	}
 
 	@Override
-	public void onError( WebSocket conn, Exception ex ) {
+	public void onError( org.java_websocket.WebSocket conn, Exception ex ) {
 		ex.printStackTrace();
 	}
 
@@ -90,9 +90,9 @@ public class WsServer extends WebSocketServer {
 	 *             When socket related I/O errors occur.
 	 */
 	public void sendToAll( String text ) {
-		Set<WebSocket> con = connections();
+		Set<org.java_websocket.WebSocket> con = connections();
 		synchronized ( con ) {
-			for( WebSocket c : con ) {
+			for( org.java_websocket.WebSocket c : con ) {
 				c.send( text );
 			}
 		}
